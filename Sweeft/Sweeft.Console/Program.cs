@@ -1,4 +1,21 @@
-﻿
+﻿using Microsoft.EntityFrameworkCore;
+using Sweeft.Console;
+using Sweeft.Console.Models;
+
+//7.დაწერეთ აპლიკაცია EntityFramework-ის (Code-First) გამოყენებით დავალება 6-ის მოცემულობით. დაწერეთ ფუნქცია რომელიც დააბრუნებს ყველა მასწავლებელს,
+//რომელიც ასწავლის მოსწავლეს, რომლის სახელია: „გიორგი“.
+Teacher[] GetAllTeachersByStudent(string studentName)
+{
+    ApplicationDbContext context = new();
+    var allTeachers = context.Teachers
+        .Include(t => t.Pupils)
+        .Where(t => t.Pupils.Any(p => p.FirstName == studentName))
+        .ToArray();
+
+    return allTeachers;
+}
+
+
 //6.დავალების სკრიპტი იხილეთ School.Sql ფაილში...
 
 
@@ -18,7 +35,7 @@ int CountVariants(int stairCount)
             variants++;
         }
 
-        if (twoWayVariant) 
+        if (twoWayVariant)
         {
             stairCount -= 2;
             variants++;
