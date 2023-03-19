@@ -1,6 +1,70 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Countries.Library;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Sweeft.Console;
 using Sweeft.Console.Models;
+
+
+
+#region დავალება 8
+
+//8.მოცემულია Countries REST API ის მისამართი: https://restcountries.com/v3.1/all, რომელიც აბრუნებს ინფორმაციას ქვეყნების შესახებ.
+//დაწერეთ ფუნქცია, რომელიც ყოველი ქვეყნისთვის შექმნის ტექსტურ დოკუმენტს (.txt) სახელად {ქვეყნის_სახელი.txt}.
+//თითოეულ დოკუმენტში უნდა იყოს შევსებული ქვეყნის “region”, “subregion”, “latlng”, “area” და “population” ველები.
+
+var rawCountries = await ReadAPI("https://restcountries.com/v3.1/all");
+var countries = JsonConvert.DeserializeObject<List<Country>>(rawCountries);
+
+
+
+//დირექტორიის შექმნა და ფაილების ჩაყრა, უმჯობესია ფაილის მისამართი არგუმენტად გადავცეთ მაგრამ არ შევცვალე მოცემული ფუნქცია და ისე დავტოვე როგორც იყო.
+void GenerateCountryDataFiles(/*string directoryPath*/)
+{
+    foreach (var country in countries)
+    {
+        string path = "D:/Countries/";
+        string fileName = $"{path}{country.Name.Common}.txt";
+
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        using (StreamWriter sw = new StreamWriter(fileName))
+        {
+            sw.WriteLine(country);
+        }
+    }
+    Console.WriteLine("Countries added into files");
+}
+
+//ქვეყნების API -ს წაკითხვა
+async Task<string> ReadAPI(string apiUrl)
+{
+    string result = string.Empty;
+    using (HttpClient httpClient = new())
+    {
+        try
+        {
+            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message);
+        }
+    }
+
+    return result;
+}
+
+#endregion
+
+
+
+#region დავალება 7
 
 //7.დაწერეთ აპლიკაცია EntityFramework-ის (Code-First) გამოყენებით დავალება 6-ის მოცემულობით. დაწერეთ ფუნქცია რომელიც დააბრუნებს ყველა მასწავლებელს,
 //რომელიც ასწავლის მოსწავლეს, რომლის სახელია: „გიორგი“.
@@ -15,10 +79,17 @@ Teacher[] GetAllTeachersByStudent(string studentName)
     return allTeachers;
 }
 
+#endregion
 
+
+
+#region დავალება 6
 //6.დავალების სკრიპტი იხილეთ School.Sql ფაილში...
+#endregion
 
 
+
+#region დავალება 5
 //5.გვაქვს n სართულიანი კიბე, ერთ მოქმედებაში შეგვიძლია ავიდეთ 1 ან 2 საფეხურით. დაწერეთ ფუნქცია რომელიც დაითვლის n სართულზე ასვლის ვარიანტების რაოდენობას.
 int CountVariants(int stairCount)
 {
@@ -44,7 +115,12 @@ int CountVariants(int stairCount)
 
     return variants;
 }
+#endregion
 
+
+
+
+#region დავალება 4
 
 //4.მოცემულია String რომელიც შედგება „(„ და „)“ ელემენტებისგან.დაწერეთ ფუნქცია რომელიც აბრუნებს ფრჩხილები არის თუ არა მათემატიკურად სწორად დასმული. მაგ: (()()) სწორი მიმდევრობაა,  ())() არასწორია
 bool IsProperly(string sequence)
@@ -76,6 +152,11 @@ bool IsProperly(string sequence)
     return stack.Count == 0;
 }
 
+#endregion
+
+
+
+#region დავალება 3
 
 //3 მოცემულია მასივი, რომელიც შედგება მთელი რიცხვებისგან. დაწერეთ ფუნქცია რომელსაც გადაეცემა ეს მასივი და აბრუნებს მინიმალურ მთელ რიცხვს, რომელიც 0-ზე მეტია და ამ მასივში არ შედის.
 int NotContains(int[] array)
@@ -89,6 +170,10 @@ int NotContains(int[] array)
     return result;
 }
 
+#endregion
+
+
+#region დავალება 2
 
 //2.გვაქვს 1,5,10,20 და 50 თეთრიანი მონეტები. დაწერეთ ფუნქცია, რომელსაც გადაეცემა თანხა (თეთრებში) და აბრუნებს მონეტების მინიმალურ რაოდენობას, რომლითაც შეგვიძლია ეს თანხა დავახურდაოთ.
 int MinSplit(int amount)
@@ -106,6 +191,11 @@ int MinSplit(int amount)
     return count;
 }
 
+#endregion
+
+
+
+#region დავალება 1
 
 //1.დაწერეთ ფუნქცია, რომელსაც გადაეცემა ტექსტი  და აბრუნებს პალინდრომია თუ არა. (პალინდრომი არის ტექსტი რომელიც ერთნაირად იკითხება ორივე მხრიდან). 
 bool IsPalindrome(string text)
@@ -137,3 +227,7 @@ bool IsPalindrome(string text)
 
     return true;
 }
+
+#endregion
+
+
